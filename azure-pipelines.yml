@@ -36,8 +36,12 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
-    artifactName: 'myWebsiteName'
+    artifactName: 'artifactOfDefaultAspNetCoreWebsite'
 
 # To copy additional files to Build directory before publishing, use Utility: copy files: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/copy-files?view=azure-devops
-
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'fdb9e5b3-a299-4522-bda6-fb5288c5352c'
+    appName: 'MichelWebApp'
+    package: $(System.DefaultWorkingDirectory)/**/*.zip
 
