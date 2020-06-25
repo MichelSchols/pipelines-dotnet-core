@@ -12,6 +12,32 @@ pool:
 variables:
   buildConfiguration: 'Release'
 
+# build projects
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
+
+# run unit tests
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    projects: '**/*Tests/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+# publish to $(Build.ArtifactStagingDirectory)
+- task: DotNetCoreCLI@2
+  inputs:
+    command: publish
+    publishWebProjects: True
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: True
+
+# this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+    artifactName: 'myWebsiteName'
+
+# To copy additional files to Build directory before publishing, use Utility: copy files: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/copy-files?view=azure-devops
+
+
